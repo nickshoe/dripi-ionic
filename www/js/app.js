@@ -23,6 +23,17 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
   });
 })
 
+.filter('toMinSec', function(){
+  return function(input){
+    if (!input) return '';
+
+    var minutes = parseInt(input/60, 10);
+    var seconds = input%60;
+
+    return minutes + (minutes > 1 ? ' minutes' : ' minute') + (seconds ? ' and ' + seconds + (seconds > 1 ? ' seconds' : ' second') : '');
+  }
+})
+
 .controller('MainCtrl', ['$scope', 'Pubnub', function($scope, Pubnub) {
 
     Pubnub.init({
@@ -45,7 +56,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
     Pubnub.subscribe({
         channel: 'status',
         callback: function(message, channel) {
-          console.log(message);
+          //console.log(message);
 
           if (message.resource == 'heartbeat') {
             clearTimeout(heartbeat_timeout_timer);
@@ -61,6 +72,9 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
 
           if (message.resource == 'water_pump') {
             $scope.is_running = message.params.is_running;
+            $scope.max_exercise_time = message.params.max_exercise_time;
+            $scope.last_started_at = Date.parse(message.params.last_started_at);
+            $scope.last_stopped_at = Date.parse(message.params.last_stopped_at);
 
             $scope.$apply();
           }
@@ -76,7 +90,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
             params: null
           },
           callback: function(message) {
-              console.log(message);
+              //console.log(message);
           }
       });
 
@@ -101,7 +115,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
             params: null
           },
           callback: function(message) {
-              console.log(message);
+              //console.log(message);
           }
       });
     }
@@ -122,7 +136,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
               params: null
             },
             callback: function(message) {
-                console.log(message);
+                //console.log(message);
 
                 check_waterpump_status();
             }
@@ -138,7 +152,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
               params: null
             },
             callback: function(message) {
-                console.log(message);
+                //console.log(message);
 
                 check_waterpump_status();
             }
