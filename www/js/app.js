@@ -32,7 +32,85 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
         uuid: $scope.uuid
     });
 
+
+    // Heartbeat
     $scope.status = 'init';
+
+    heartbeat_timeout_timer = null;
+
+    // Water Pump
+    $scope.is_running = null;
+
+    // Subscribe to 'status' messages channel
+    Pubnub.subscribe({
+        channel: 'status',
+        callback: function(message, channel) {
+          console.log(message);
+
+          if (message.resource == 'heartbeat') {
+            clearTimeout(heartbeat_timeout_timer);
+
+            if (message.params == 'good') {
+              $scope.status = 'online';
+            } else {
+              $scope.status = 'offline';
+            }
+
+            $scope.$apply();
+          }
+
+          if (message.resource == 'water_pump') {
+            $scope.is_running = message.params.is_running;
+
+            $scope.$apply();
+          }
+        }
+    });
+
+    function check_heartbeat() {
+      Pubnub.publish({
+          channel: 'control',
+          message: {
+            resource: 'heartbeat',
+            operation: 'status',
+            params: null
+          },
+          callback: function(message) {
+              console.log(message);
+          }
+      });
+
+      heartbeat_timeout_timer = setTimeout(function() {
+        $scope.status = 'offline'
+
+        $scope.$apply();
+      }, 15000);
+    }
+
+    check_heartbeat();
+    setInterval(function() {
+      check_heartbeat();
+    }, 15000);
+
+    function check_waterpump_status() {
+      Pubnub.publish({
+          channel: 'control',
+          message: {
+            resource: 'water_pump',
+            operation: 'status',
+            params: null
+          },
+          callback: function(message) {
+              console.log(message);
+          }
+      });
+    }
+
+    check_waterpump_status();
+
+    $scope.refresh_status = function() {
+      check_waterpump_status();
+    };
 
     // Send the messages over PubNub Network
     $scope.start = function() {
@@ -43,11 +121,13 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
               operation: 'start',
               params: null
             },
-            callback: function(m) {
-                console.log(m);
+            callback: function(message) {
+                console.log(message);
+
+                check_waterpump_status();
             }
         });
-    }
+    };
 
     $scope.stop = function() {
         Pubnub.publish({
@@ -57,41 +137,12 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
               operation: 'stop',
               params: null
             },
-            callback: function(m) {
-                console.log(m);
+            callback: function(message) {
+                console.log(message);
+
+                check_waterpump_status();
             }
         });
-    }
-
-//     Subscribe to messages channel
-//     Pubnub.subscribe({
-//         channel: 'status',
-//         callback: function(message, channel) {
-//           if (message.params == 'good') {
-//             $scope.status = 'online';
-//           } else {
-//             $scope.status = 'offline';
-//           }
-//         }
-//     });
-//
-//     check_heartbeat();
-//     setInterval(function() {
-//       check_heartbeat();
-//     }, 7000);
-//
-//     function check_heartbeat() {
-//       Pubnub.publish({
-//           channel: 'control',
-//           message: {
-//             resource: 'heartbeat',
-//             operation: 'status',
-//             params: null
-//           },
-//           callback: function(m) {
-//               console.log(m);
-//           }
-//       });
-//     }
+    };
 
 }]);
