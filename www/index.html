@@ -48,11 +48,11 @@
           <div class="item item-text-wrap">
             Max Exercise Time: {{max_exercise_time | toMinSec}}
           </div>
-          <div class="item item-text-wrap" ng-show="last_stopped_at !== null">
-            Last Start: {{last_started_at | date:"EEEE d MMM 'at' H:mm:ss"}}
+          <div class="item item-text-wrap" ng-show="last_started_at">
+            Last Start: <span ng-show="last_started_at">{{last_started_at | date:"EEEE d MMM 'at' H:mm:ss"}}</span>
           </div>
-          <div class="item item-text-wrap" ng-show="last_stopped_at !== null">
-            Last Stop: {{last_stopped_at | date:"EEEE d MMM 'at' H:mm:ss"}}
+          <div class="item item-text-wrap" ng-show="last_stopped_at">
+            Last Stop: <span ng-show="last_started_at">{{last_stopped_at | date:"EEEE d MMM 'at' H:mm:ss"}}</span>
           </div>
           <div class="item item-text-wrap" ng-show="last_session_elapsed_time !== null">
             Last Session: {{last_session_elapsed_time | toMinSec}}
