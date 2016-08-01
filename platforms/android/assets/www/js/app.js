@@ -52,6 +52,9 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
     // Water Pump
     $scope.is_running = null;
 
+    $scope.max_exercise_time = null;
+    $scope.last_started_at = null;
+    $scope.last_stopped_at = null;
     $scope.last_session_elapsed_time = null;
     $scope.current_session_elapsed_time = null;
 
