@@ -88,7 +88,7 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
               $scope.last_session_elapsed_time = null;
             }
 
-            if ($scope.last_started_at > $scope.last_stopped_at) {
+            if ($scope.last_started_at > $scope.last_stopped_at || $scope.last_started_at && !$scope.last_stopped_at) {
               elapsed_time_in_milliseconds = Date.now() - $scope.last_started_at;
               $scope.current_session_elapsed_time = Math.ceil(elapsed_time_in_milliseconds / 1000);
             } else {
