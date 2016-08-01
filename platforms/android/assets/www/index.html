@@ -30,9 +30,10 @@
     <ion-pane>
       <ion-header-bar class="bar-stable">
         <h1 class="title">DriPi</h1>
-        <button class="button icon ion-ios-refresh-empty" ng-click="refresh_status()" ng-disabled="status != 'online'"></button>
+        <button class="button icon ion-refresh" ng-click="refresh_status()" ng-disabled="status != 'online'"></button>
       </ion-header-bar>
       <ion-content>
+
         <button class="button button-block button-positive" ng-click="start()" ng-disabled="(status != 'online' || is_running == null || is_running == true) ? true : false">
           start
         </button>
@@ -47,14 +48,25 @@
           <div class="item item-text-wrap">
             Max Exercise Time: {{max_exercise_time | toMinSec}}
           </div>
-          <div class="item item-text-wrap">
+          <div class="item item-text-wrap" ng-show="last_stopped_at !== null">
             Last Start: {{last_started_at | date:"EEEE d MMM 'at' H:mm:ss"}}
           </div>
-          <div class="item item-text-wrap">
+          <div class="item item-text-wrap" ng-show="last_stopped_at !== null">
             Last Stop: {{last_stopped_at | date:"EEEE d MMM 'at' H:mm:ss"}}
+          </div>
+          <div class="item item-text-wrap" ng-show="last_session_elapsed_time !== null">
+            Last Session: {{last_session_elapsed_time | toMinSec}}
           </div>
         </div>
 
+        <div class="card" ng-show="current_session_elapsed_time !== null">
+          <div class="item item-divider">
+            Current Session (Hit <i class="icon ion-refresh"></i>)
+          </div>
+          <div class="item item-text-wrap">
+            Time: {{current_session_elapsed_time | toMinSec}}
+          </div>
+        </div>
       </ion-content>
 
       <div class="bar bar-footer" ng-class="{'bar-stable': status == 'init', 'bar-assertive': status == 'offline', 'bar-balanced': status == 'online'}">
