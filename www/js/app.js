@@ -52,6 +52,8 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
     // Water Pump
     $scope.is_running = null;
 
+    $scope.current_session_elapsed_time = null
+
     // Subscribe to 'status' messages channel
     Pubnub.subscribe({
         channel: 'status',
@@ -75,6 +77,14 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
             $scope.max_exercise_time = message.params.max_exercise_time;
             $scope.last_started_at = Date.parse(message.params.last_started_at);
             $scope.last_stopped_at = Date.parse(message.params.last_stopped_at);
+            $scope.last_session_elapsed_time = Math.ceil(($scope.last_stopped_at - $scope.last_started_at) / 1000);
+
+            if ($scope.last_started_at > $scope.last_stopped_at) {
+              elapsed_time_in_milliseconds = Date.now() - $scope.last_started_at;
+              $scope.current_session_elapsed_time = Math.ceil(elapsed_time_in_milliseconds / 1000);
+            } else {
+              $scope.current_session_elapsed_time = null
+            }
 
             $scope.$apply();
           }
