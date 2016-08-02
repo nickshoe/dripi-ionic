@@ -49,6 +49,11 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
 
     heartbeat_timeout_timer = null;
 
+    // Pi
+    $scope.cpu_temp = null;
+    $scope.gpu_temp = null;
+    $scope.cpu_freq = null;
+
     // Water Pump
     $scope.is_running = null;
 
@@ -72,6 +77,14 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
             } else {
               $scope.status = 'offline';
             }
+
+            $scope.$apply();
+          }
+
+          if (message.resource == 'pi') {
+            $scope.cpu_temp = message.params.cpu_temp;
+            $scope.gpu_temp = message.params.gpu_temp;
+            $scope.cpu_freq = message.params.cpu_freq;
 
             $scope.$apply();
           }
@@ -124,6 +137,34 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
     setInterval(function() {
       check_heartbeat();
     }, 15000);
+
+    function check_pi_status() {
+      Pubnub.publish({
+          channel: 'control',
+          message: {
+            resource: 'pi',
+            operation: 'status',
+            params: null
+          },
+          callback: function(message) {
+              //console.log(message);
+          }
+      });
+    }
+
+    pi_status_interval = null;
+
+    $scope.$watch('status', function(newValue, oldValue) {
+      if (newValue == 'online') {
+        check_pi_status();
+
+        pi_status_interval = setInterval(function() {
+            check_pi_status();
+        }, 5000);
+      } else {
+        clearInterval(pi_status_interval);
+      }
+    });
 
     function check_waterpump_status() {
       Pubnub.publish({
