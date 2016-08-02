@@ -37,8 +37,8 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
 .controller('MainCtrl', ['$scope', 'Pubnub', function($scope, Pubnub) {
 
     Pubnub.init({
-        publish_key: 'pub-c-202f92c7-77aa-4abd-a588-edea3cbb4ee5',
-        subscribe_key: 'sub-c-d379b9a0-573c-11e6-b1c5-0619f8945a4f',
+        publish_key: '',
+        subscribe_key: '',
         ssl: true,
         uuid: $scope.uuid
     });
