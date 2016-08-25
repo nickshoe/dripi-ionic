@@ -73,6 +73,7 @@
         <div class="title">
           <span ng-show="status != 'online'">{{status}}</span><span ng-show="status == 'online'"><span ng-show="cpu_temp">CPU {{cpu_temp}}'C<span ng-show="cpu_freq">@{{cpu_freq}}MHz</span></span></span>
         </div>
+        <button class="button icon ion-power" ng-click="shutdown()" ng-show="status == 'online'"></button>
       </div>
 
     </ion-pane>

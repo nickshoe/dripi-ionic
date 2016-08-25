@@ -186,6 +186,20 @@ angular.module('starter', ['ionic', 'pubnub.angular.service'])
       check_waterpump_status();
     };
 
+    $scope.shutdown = function() {
+      Pubnub.publish({
+        channel: 'control',
+        message: {
+          resource: 'pi',
+          operation: 'shutdown',
+          params: null
+        },
+        callback: function(message) {
+          console.log(message);
+        }
+      })
+    }
+
     // Send the messages over PubNub Network
     $scope.start = function() {
         Pubnub.publish({
